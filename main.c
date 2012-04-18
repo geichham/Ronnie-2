@@ -11,6 +11,7 @@
 #include "lib/standards.h"
 #include "lib/i2cmaster.h"
 #include "lib/motors.h"
+#include "lib/compass.h"
 
 #define SRFout PD6
 #define SRFin PD2
@@ -23,14 +24,11 @@
 #define threshold 60
 #define maxspeed 179
 
-#define HMC5883L_WRITE 0x3C // write address
-#define HMC5883L_READ 0x3D // read address
-
+float headingDegrees;
 uint8_t max_course_deviation = 5;
 uint8_t heading_previous = 0;
 
 char buffer[10];
-uint16_t dist = 0;
 
 // SRF05
 uint16_t distR = 0;
@@ -40,12 +38,6 @@ uint16_t distL = 0;
 volatile unsigned int microseconds = 0; // holds pulselength
 volatile uint8_t INT0_interrupt = 0; // used to determine weather it's rising or falling edge of the pulse 
 volatile uint8_t measurement_complete = 0; // is being polled to determine end of reading
-
-// compass 
-int16_t raw_x = 0;	
-int16_t raw_y = 0;
-int16_t raw_z = 0;
-float headingDegrees = 0;
 
 // RX input via interrupt
 /*
@@ -118,56 +110,6 @@ void init_Servo(void){
 	DDRD |= (1<<PD7); // OC2A as output
 	
 	OCR2A = 21; // set to 90 degrees neutral position	
-}
-
-void init_HMC5883L(void){
-	
-	sendUSART("Initializing HMC5883L...");
-	
-	
-	i2c_start(HMC5883L_WRITE); 
-	i2c_write(0x00); // set pointer to CRA
-	i2c_write(0x70); // write 0x70 to CRA
-	i2c_stop();
-		
-	i2c_start(HMC5883L_WRITE); 
-	i2c_write(0x01); // set pointer to CRB
-	i2c_write(0xA0); 
-	i2c_stop();
-		
-	i2c_start(HMC5883L_WRITE); 
-	i2c_write(0x02); // set pointer to measurement mode
-	i2c_write(0x00); // continous measurement
-	i2c_stop();
-	
-	sendUSART("Done!");
-}
-
-void getHeading(void){
-	
-	sendUSART("Start reading...");
-	
-	i2c_start_wait(HMC5883L_WRITE);
-	i2c_write(0x03); // set pointer to X axis MSB 
-	i2c_stop();
-	
-	i2c_rep_start(HMC5883L_READ); 
-
-	raw_x = ((uint8_t)i2c_readAck())<<8;
-	raw_x |= i2c_readAck();
-	
-	raw_z = ((uint8_t)i2c_readAck())<<8;
-	raw_z |= i2c_readAck();
-	
-	raw_y = ((uint8_t)i2c_readAck())<<8;
-	raw_y |= i2c_readNak();
-	
-	i2c_stop();
-	
-	headingDegrees = atan2((double)raw_y,(double)raw_x) * 180 / 3.141592654 + 180; 
-	
-	sendUSART("complete!");
-	sendUSART("\r\n");
 }
 
 int main(void)
