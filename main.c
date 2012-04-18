@@ -350,24 +350,24 @@ int main(void)
 		if(distM < threshold && distR > threshold){
 			
 			while(distM < threshold){
-				setPWMleft(maxspeed + 100);
-				setPWMright(maxspeed - 100);
+				setPWMleft(motor_values[maxspeed]);
+				setPWMright(motor_values[0]);
 				distM = SRF05_getDistance(middle);
 			}			
 			
-			setPWMleft(maxspeed);
-			setPWMright(maxspeed);
+			setPWMleft(motor_values[maxspeed]);
+			setPWMright(motor_values[maxspeed]);
 		}
 		else if(distM < threshold && distL > threshold){
 	
 			while(distM < threshold){
-				setPWMleft(maxspeed - 100);
-				setPWMright(maxspeed + 100);
+				setPWMleft(motor_values[0]);
+				setPWMright(motor_values[maxspeed]);
 				distM = SRF05_getDistance(middle);
 			}	
 			
-			setPWMleft(maxspeed);
-			setPWMright(maxspeed);
+			setPWMleft(motor_values[maxspeed]);
+			setPWMright(motor_values[maxspeed]);
 		}
 		
 		// another test
