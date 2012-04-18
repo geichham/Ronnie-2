@@ -139,65 +139,7 @@ int main(void)
 	
     while(1)
     {
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Just some tests ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		/*accelerate(1);
-		_delay_ms(1000);
-		slowdown(1);
-		_delay_ms(1000);´*/
-		
-		/* SRF05 TEST - Funktioniert
-        dist = SRF05_getDistance(middle);
-		itoa(dist, buffer, 10);
-		
-		sendUSART(buffer);
-		sendchar('\n');
-		_delay_ms(1000);
-		*/
-		
-		/* Servo TEST  - Funktioniert
-		Servo = left;
-		_delay_ms(1000);
-		Servo = middle; 
-		_delay_ms(1000);
-		Servo = right;
-		_delay_ms(1000);
-		*/
-		
-		/* 
-		dist = SRF05_getDistance(left);
-		itoa(dist, buffer, 10);
-		
-		sendUSART("Left: ");
-		sendUSART(buffer);
-		sendchar('\n');
-		_delay_ms(1000);
-		_delay_ms(100);
-		
-		dist = SRF05_getDistance(middle);
-		itoa(dist, buffer, 10);
-		
-		sendUSART("Middle: ");
-		sendUSART(buffer);
-		sendchar('\n');
-		_delay_ms(1000);
-		
-		dist = SRF05_getDistance(right);
-		itoa(dist, buffer, 10);
-		
-		sendUSART("Right: ");
-		sendUSART(buffer);
-		sendchar('\n');
-		_delay_ms(1000);*/
-		
-		/* HMC5883L TEST - Funktioniert
-		getHeading();
-		dtostrf(headingDegrees, 8, 2, buffer);
-		sendUSART(buffer);
-		_delay_ms(66);
-		*/
-		
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		
+	
 		// Main driving loop
 		
 		while(distM > threshold){
