@@ -15,7 +15,8 @@ TARGET = main
 # List C source files here. (C dependencies are automatically generated.)
 SRC = $(TARGET).c \
 	  lib/twimaster.c \
-	  lib/motors.c
+	  lib/motors.c \
+	  lib/compass.c
 
 
 # List Assembler source files here.
