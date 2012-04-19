@@ -16,7 +16,8 @@ TARGET = main
 SRC = $(TARGET).c \
 	  lib/twimaster.c \
 	  lib/motors.c \
-	  lib/compass.c
+	  lib/compass.c \
+	  lib/SRF05.c
 
 
 # List Assembler source files here.
