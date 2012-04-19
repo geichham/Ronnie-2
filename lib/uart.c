@@ -10,7 +10,7 @@
 volatile unsigned char RX_buf[5];
 volatile uint8_t RX_pointer = 0;
 
-void init_USART(uint16_t baudrate){
+void init_uart(uint16_t baudrate){
 	
 	uint16_t UBRR_val = (F_CPU / (baudrate * 16)) - 1;
 	

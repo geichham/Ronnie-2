@@ -47,7 +47,7 @@ void init_Servo(void){
 int main(void)
 {
 	init_SRF05();
-	init_USART(9600);
+	init_uart(9600);
 	init_Servo();
 	init_Timer1();
 	
