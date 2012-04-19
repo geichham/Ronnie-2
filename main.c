@@ -8,11 +8,11 @@
 #include <avr/interrupt.h>
 #include <math.h>
 
-#include "lib/standards.h"
 #include "lib/i2cmaster.h"
 #include "lib/motors.h"
 #include "lib/compass.h"
 #include "lib/SRF05.h"
+#include "lib/uart.h"
 
 #define Servo OCR2A
 #define left 35
@@ -33,19 +33,6 @@ uint16_t distR = 0;
 uint16_t distM = 0;
 uint16_t distL = 0;
 
-// RX input via interrupt
-/*
- *	0  |  1  |  2  |  3  |  4  |  5  |  6  |  7  |  8  |  9 
- *	   |	 |     |     |	   |     |     |     |     |
- *	M  |  D  | S1  | S2  | S3  |
- *
- *	M = motor / actuator
- *  D = direction
- *	Sn = speed / data
- */
- 
-volatile unsigned char RX_buf[5];
-volatile uint8_t RX_pointer = 0;
 
 void init_Servo(void){
 	
@@ -60,7 +47,7 @@ void init_Servo(void){
 int main(void)
 {
 	init_SRF05();
-	init_USART();
+	init_USART(9600);
 	init_Servo();
 	init_Timer1();
 	
@@ -151,13 +138,3 @@ int main(void)
     }
 }
 
-ISR(USART0_RX_vect){
-	
-	if(RX_pointer < 10){
-		RX_buf[RX_pointer] = UDR0;
-		RX_pointer++;	
-	}
-	else{
-		RX_pointer = 0;
-	}
-}
