@@ -125,7 +125,7 @@ int main(void)
 	
 	sei();
 	
-	getHeading();
+	headingDegrees = getHeading();
 	heading_previous = headingDegrees;
 	
 	distL = SRF05_getDistance(left);
