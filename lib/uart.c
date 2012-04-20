@@ -10,6 +10,8 @@
 
 #include "uart.h"
 
+unsigned char string[MAX_STRLEN+1];
+
 void init_uart(uint16_t baudrate){
 	
 	uint16_t UBRR_val = (F_CPU/16)/(baudrate-1);
