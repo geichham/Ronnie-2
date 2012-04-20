@@ -12,6 +12,10 @@
 #include "lib/motors.h"
 #include "lib/compass.h"
 #include "lib/SRF05.h"
+
+/* define maximum string length in characters for uart.h (must correspond with define in lib/uart.c) */
+#define MAX_STRLEN 12
+
 #include "lib/uart.h"
 
 #define Servo OCR2A

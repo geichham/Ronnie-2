@@ -5,10 +5,10 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
-#include "uart.h"
+/* define maximum string length in characters for uart.h */
+#define MAX_STRLEN 12
 
-volatile unsigned char RX_buf[5];
-volatile uint8_t RX_pointer = 0;
+#include "uart.h"
 
 void init_uart(uint16_t baudrate){
 	
@@ -42,11 +42,17 @@ void uart_puts(char *s){
 
 ISR(USART0_RX_vect){
 	
-	if(RX_pointer < 10){
-		RX_buf[RX_pointer] = UDR0;
-		RX_pointer++;	
+	static uint8_t character = 0;
+	unsigned char t;
+
+	t = UDR0;
+	
+	if( (character < MAX_STRLEN) && (t != '\n') ){
+		string[character] = t;
+		character++;
 	}
 	else{
-		RX_pointer = 0;
+		string[MAX_STRLEN] = '\0'; // generate a "valid" 0 terminated C-String
+		character = 0;
 	}
 }
