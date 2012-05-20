@@ -18,7 +18,7 @@ volatile uint8_t INT0_interrupt = 0; // used to determine weather it's rising or
 volatile uint8_t measurement_complete = 0; // is being polled to determine end of reading
 
 void init_SRF05(void){
-	// Timer einstellen
+	// initialize Timer 
 	TCCR0A = (1<<WGM01); // CTC Mode of Timer 0
 	// ((16000000 / 8) / 100000) -1 = 19  
 	OCR0A = 19; // 19 steps = interrupt every ~10µs
@@ -28,7 +28,8 @@ void init_SRF05(void){
 	
 	EIMSK |= (1<<INT0); // enable INT0 in external interrupt mask register  
 	
-	DDRB |= (1<<SRFout); // set trigger pin to output 
+	
+	DDRD |= (1<<SRFout); // set trigger pin to output 
 	DDRD &= ~(1<<SRFin); // set INT0 pin to input
 }
 
@@ -48,15 +49,13 @@ uint16_t SRF05_getDistance(uint8_t direction){
 		PORTD |= (1<<SRFout);
 		_delay_us(12); // 12µs Trigger-Signal
 		PORTD &= ~(1<<SRFout);
-		
+		 
 		// trigger external interrupt 0 on rising edge:
 		EICRA = (1<<ISC01) | (1<<ISC00);
 		
 		while(measurement_complete != 1){
 			//wait until end of reading
 		}
-		
-		EICRA &= ~(1<<ISC01);
 		
 		measurement_complete = 0;
 		
