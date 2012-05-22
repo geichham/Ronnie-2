@@ -28,9 +28,9 @@ void init_SRF05(void){
 	
 	EIMSK |= (1<<INT0); // enable INT0 in external interrupt mask register  
 	
-	
 	DDRD |= (1<<SRFout); // set trigger pin to output 
 	DDRD &= ~(1<<SRFin); // set INT0 pin to input
+	
 }
 
 uint16_t SRF05_getDistance(uint8_t direction){		
@@ -40,28 +40,31 @@ uint16_t SRF05_getDistance(uint8_t direction){
 		_delay_ms(600);
 		
 		uint16_t distance = 0;
-		
 		distance = 0; // reset distance, otherwise readings are added up
-		microseconds = 0; // reset microseconds aswell
-		TCNT0 = 0; // set Timer to 0
 		
-		// Trigger the reading:
-		PORTD |= (1<<SRFout);
-		_delay_us(12); // 12µs Trigger-Signal
-		PORTD &= ~(1<<SRFout);
-		 
-		// trigger external interrupt 0 on rising edge:
-		EICRA = (1<<ISC01) | (1<<ISC00);
-		
-		while(measurement_complete != 1){
-			//wait until end of reading
+		// read the SRF05 four times and then calculate the average to get more stable values
+		for(uint8_t sample = 0; sample < 4; sample++){
+			microseconds = 0; // reset microseconds aswell
+			TCNT0 = 0; // set Timer to 0
+			
+			// Trigger the reading:
+			PORTD |= (1<<SRFout);
+			_delay_us(12); // 12µs Trigger-Signal
+			PORTD &= ~(1<<SRFout);
+			 
+			// trigger external interrupt 0 on rising edge:
+			EICRA = (1<<ISC01) | (1<<ISC00);
+			
+			while(measurement_complete != 1){
+				//wait until end of reading
+			}
+			
+			measurement_complete = 0;
+			distance += microseconds;
+			_delay_ms(10);
 		}
 		
-		measurement_complete = 0;
-		
-		distance = microseconds / 58;
-		
-		return distance;
+		return (distance / 58) / 4;
 }
 
 ISR(INT0_vect){  // external interrupt 0 
