@@ -1,0 +1,19 @@
+This is the communication structure used to transmit the sensor data 
+back to a computer.
+
+Sensors:
+
+SRF05 --> Ultrasonic distance sensor = object avoidance
+SHARP GP2D12 --> IR distance sensor = cliff detection
+HMC5883L --> electronic compass = course correction, heading
+
+
+  ID     DATA1   DATA2   DATA3
+
+#SRF05#  side    dist
+
+#SHARP#  dist
+
+#5883L#   X       Y       Z
+
+#ETREX#  coords  height  heading
