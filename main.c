@@ -8,7 +8,7 @@
 #include <avr/interrupt.h>
 #include <math.h>
 
-#include "lib/i2cmaster.h"
+#include "lib/I2C_master.h"
 #include "lib/motors.h"
 #include "lib/compass.h"
 #include "lib/SRF05.h"
@@ -55,14 +55,17 @@ int main(void)
 	init_Servo();
 	init_Timer1();
 	
-	
-	i2c_init();
+	/*
+	I2C_init();
 	init_HMC5883L();
+	*/
 	
 	sei();
 	
+	/*
 	headingDegrees = getHeading();
 	heading_previous = headingDegrees;
+	*/
 	
 	distL = SRF05_getDistance(left);
 	distM = SRF05_getDistance(middle);
@@ -71,17 +74,27 @@ int main(void)
 	
 	Mleftfwd();
 	Mrightfwd();
-	accelerate(1);
+	accelerate(2);
 	
     while(1)
     {
-	
+		/* SRF05 Test
+		distL = SRF05_getDistance(left);
+		itoa(distL, buffer, 10);
+		uart_puts(buffer);
+		distM = SRF05_getDistance(middle);
+		itoa(distM, buffer, 10);
+		uart_puts(buffer);			
+		distR = SRF05_getDistance(right); 
+		itoa(distR, buffer, 10);
+		uart_puts(buffer);
+		*/
 		// Main driving loop
 		
 		while(distM > threshold){
 			distL = SRF05_getDistance(left);
-			distM = SRF05_getDistance(middle);
-			distR = SRF05_getDistance(right);   
+			distM = SRF05_getDistance(middle);			
+			distR = SRF05_getDistance(right); 
 		}
 		
 		if(distM < threshold && distR > threshold){

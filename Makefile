@@ -14,7 +14,7 @@ TARGET = main
 
 # List C source files here. (C dependencies are automatically generated.)
 SRC = $(TARGET).c \
-	  lib/twimaster.c \
+	  lib/I2C_master.c \
 	  lib/motors.c \
 	  lib/compass.c \
 	  lib/SRF05.c \
