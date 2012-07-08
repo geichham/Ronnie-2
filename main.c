@@ -55,17 +55,13 @@ int main(void)
 	init_Servo();
 	init_Timer1();
 	
-	/*
+	
 	I2C_init();
 	init_HMC5883L();
-	*/
+	
 	
 	sei();
 	
-	/*
-	headingDegrees = getHeading();
-	heading_previous = headingDegrees;
-	*/
 	
 	distL = SRF05_getDistance(left);
 	distM = SRF05_getDistance(middle);
@@ -75,6 +71,9 @@ int main(void)
 	Mleftfwd();
 	Mrightfwd();
 	accelerate(2);
+	
+	headingDegrees = getHeading();
+	heading_previous = headingDegrees;
 	
     while(1)
     {
@@ -89,8 +88,9 @@ int main(void)
 		itoa(distR, buffer, 10);
 		uart_puts(buffer);
 		*/
-		// Main driving loop
 		
+		
+		/* Driving loop with object detection
 		while(distM > threshold){
 			distL = SRF05_getDistance(left);
 			distM = SRF05_getDistance(middle);			
@@ -119,39 +119,42 @@ int main(void)
 			setPWMleft(motor_values[maxspeed]);
 			setPWMright(motor_values[maxspeed]);
 		}
+		*/
 		
-		// another test
-		/*
+		//course corretion with HMC5883L
+		
 		while( (headingDegrees < (heading_previous + max_course_deviation)) && (headingDegrees > heading_previous - max_course_deviation ) ){
 			getHeading();
+			itoa(headingDegrees, buffer, 10);
+			uart_puts(buffer);
 			_delay_ms(66);
 		}
 		
 		if(headingDegrees > (heading_previous + max_course_deviation) ){
 		
 			while(headingDegrees > (heading_previous + max_course_deviation) ){
-				setPWMlinks(maxspeed + 50);
-				setPWMrechts(maxspeed - 50);
+				setPWMleft(maxspeed + 50);
+				setPWMright(maxspeed - 50);
 				getHeading();
 				_delay_ms(66);
 			}
 			
-			setPWMlinks(maxspeed);
-			setPWMrechts(maxspeed);	
+			setPWMleft(maxspeed);
+			setPWMright(maxspeed);	
 		}
 		else if(headingDegrees < (heading_previous - max_course_deviation) ){
 			
 			while(headingDegrees < (heading_previous - max_course_deviation)){
-				setPWMlinks(maxspeed - 50);
-				setPWMrechts(maxspeed + 50);
+				setPWMleft(maxspeed - 50);
+				setPWMright(maxspeed + 50);
 				getHeading();
 				_delay_ms(66);	
 			}
 			
-			setPWMlinks(maxspeed);
-			setPWMrechts(maxspeed);	
+			setPWMleft(maxspeed);
+			setPWMright(maxspeed);	
 		}	
-		*/		
+				
     }
 }
 
