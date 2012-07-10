@@ -24,7 +24,7 @@
 #define right 8
 
 #define threshold 60
-#define maxspeed 179
+#define maxspeed 120
 
 float headingDegrees;
 uint8_t max_course_deviation = 5;
@@ -55,10 +55,10 @@ int main(void)
 	init_Servo();
 	init_Timer1();
 	
-	
+	/*
 	I2C_init();
 	init_HMC5883L();
-	
+	*/
 	
 	sei();
 	
@@ -72,9 +72,10 @@ int main(void)
 	Mrightfwd();
 	accelerate(2);
 	
+	/*
 	headingDegrees = getHeading();
 	heading_previous = headingDegrees;
-	
+	*/
     while(1)
     {
 		/* SRF05 Test
@@ -90,39 +91,78 @@ int main(void)
 		*/
 		
 		
-		/* Driving loop with object detection
+		// Driving loop with object detection
+		
 		while(distM > threshold){
 			distL = SRF05_getDistance(left);
 			distM = SRF05_getDistance(middle);			
 			distR = SRF05_getDistance(right); 
 		}
 		
-		if(distM < threshold && distR > threshold){
+		if( (distM < threshold) && (distL > threshold )){
+			
+			Mleftfwd();
+			Mrightbwd();
 			
 			while(distM < threshold){
-				setPWMleft(motor_values[maxspeed]);
-				setPWMright(motor_values[0]);
 				distM = SRF05_getDistance(middle);
 			}			
 			
+			Mleftfwd();
+			Mrightfwd();
 			setPWMleft(motor_values[maxspeed]);
 			setPWMright(motor_values[maxspeed]);
 		}
-		else if(distM < threshold && distL > threshold){
+		else if( (distM < threshold) && (distR > threshold) ){
+	
+			Mleftbwd();
+			Mrightfwd();
 	
 			while(distM < threshold){
-				setPWMleft(motor_values[0]);
-				setPWMright(motor_values[maxspeed]);
 				distM = SRF05_getDistance(middle);
 			}	
 			
+			Mleftfwd();
+			Mrightfwd();
 			setPWMleft(motor_values[maxspeed]);
 			setPWMright(motor_values[maxspeed]);
 		}
-		*/
+		else{ // if nothing else applies --> left and right are not greater than threshold
+			
+			OCR1A = 0;
+			OCR1B = 0;
+			
+			Mleftbwd();
+			Mrightbwd();
+			
+			accelerate(2);
+			_delay_ms(300);
+			
+			OCR1A = 0;
+			OCR1B = 0;
+			
+			
+			Mleftfwd();
+			Mrightbwd();
+			
+			accelerate(2);
+			_delay_ms(300);
+			
+			OCR1A = 0;
+			OCR1B = 0;
+			
+			distL = SRF05_getDistance(left);
+			distM = SRF05_getDistance(middle);			
+			distR = SRF05_getDistance(right); 
+			
+			Mleftfwd();
+			Mrightfwd();
+			accelerate(2);
+		}
+		
 		
 		//course corretion with HMC5883L
-		
+		/*
 		while( (headingDegrees < (heading_previous + max_course_deviation)) && (headingDegrees > heading_previous - max_course_deviation ) ){
 			getHeading();
 			itoa(headingDegrees, buffer, 10);
@@ -154,7 +194,7 @@ int main(void)
 			setPWMleft(maxspeed);
 			setPWMright(maxspeed);	
 		}	
-				
+		*/		
     }
 }
 
