@@ -29,6 +29,8 @@
 float headingDegrees;
 uint8_t max_course_deviation = 5;
 uint8_t heading_previous = 0;
+uint8_t course_deviation = 0;
+
 
 char buffer[10];
 
@@ -48,6 +50,33 @@ void init_Servo(void){
 	OCR2A = 21; // set to 90 degrees neutral position	
 }
 
+void getCourse(void){
+	headingDegrees = getHeading();
+	
+	if( headingDegrees > (heading_previous + max_course_deviation) ){
+		while(headingDegrees > (heading_previous + max_course_deviation) ){
+			setPWMleft(maxspeed + 50);
+			setPWMright(0);
+			headingDegrees = getHeading();
+			_delay_ms(66);
+		}
+				
+		setPWMleft(maxspeed);
+		setPWMright(maxspeed);	
+	}
+	else if(headingDegrees < (heading_previous - max_course_deviation) ){
+		while(headingDegrees < (heading_previous - max_course_deviation)){
+			setPWMleft(0);
+			setPWMright(maxspeed + 50);
+			headingDegrees = getHeading();
+			_delay_ms(66);	
+		}
+				
+		setPWMleft(maxspeed);
+		setPWMright(maxspeed);	
+	}
+}
+
 int main(void)
 {
 	init_SRF05();
@@ -55,10 +84,10 @@ int main(void)
 	init_Servo();
 	init_Timer1();
 	
-	/*
+	
 	I2C_init();
 	init_HMC5883L();
-	*/
+	
 	
 	sei();
 	
@@ -72,24 +101,12 @@ int main(void)
 	Mrightfwd();
 	accelerate(2);
 	
-	/*
+	
 	headingDegrees = getHeading();
 	heading_previous = headingDegrees;
-	*/
+	
     while(1)
     {
-		/* SRF05 Test
-		distL = SRF05_getDistance(left);
-		itoa(distL, buffer, 10);
-		uart_puts(buffer);
-		distM = SRF05_getDistance(middle);
-		itoa(distM, buffer, 10);
-		uart_puts(buffer);			
-		distR = SRF05_getDistance(right); 
-		itoa(distR, buffer, 10);
-		uart_puts(buffer);
-		*/
-		
 		
 		// Driving loop with object detection
 		
@@ -97,6 +114,7 @@ int main(void)
 			distL = SRF05_getDistance(left);
 			distM = SRF05_getDistance(middle);			
 			distR = SRF05_getDistance(right); 
+			//getCourse();
 		}
 		
 		if( (distM < threshold) && (distL > threshold )){
@@ -160,41 +178,7 @@ int main(void)
 			accelerate(2);
 		}
 		
-		
-		//course corretion with HMC5883L
-		/*
-		while( (headingDegrees < (heading_previous + max_course_deviation)) && (headingDegrees > heading_previous - max_course_deviation ) ){
-			getHeading();
-			itoa(headingDegrees, buffer, 10);
-			uart_puts(buffer);
-			_delay_ms(66);
-		}
-		
-		if(headingDegrees > (heading_previous + max_course_deviation) ){
-		
-			while(headingDegrees > (heading_previous + max_course_deviation) ){
-				setPWMleft(maxspeed + 50);
-				setPWMright(maxspeed - 50);
-				getHeading();
-				_delay_ms(66);
-			}
-			
-			setPWMleft(maxspeed);
-			setPWMright(maxspeed);	
-		}
-		else if(headingDegrees < (heading_previous - max_course_deviation) ){
-			
-			while(headingDegrees < (heading_previous - max_course_deviation)){
-				setPWMleft(maxspeed - 50);
-				setPWMright(maxspeed + 50);
-				getHeading();
-				_delay_ms(66);	
-			}
-			
-			setPWMleft(maxspeed);
-			setPWMright(maxspeed);	
-		}	
-		*/		
+		heading_previous = getHeading();
     }
 }
 
